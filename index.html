@@ -1,0 +1,441 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>body{margin:0}img{max-width:100%}</style>
+<title>구스다운 이불 리서치</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: 한 줄 문서형 리포트. 좌측 정렬 본문 + 넓은 표는 자체 가로 스크롤. 깃털 톤(차가운 회백)과 잉크 블루 강조. */
+:root{
+  --bg:#f5f6f4; --surface:#ffffff; --fg:#1d2430; --muted:#5b6472; --line:#d9ddd8;
+  --accent:#2f4f7a; --accent-soft:#e3e9f2;
+  --good:#2f7a4f; --good-soft:#e2f1e7; --warn:#a0661a; --warn-soft:#f7ecda; --bad:#a83a3a; --bad-soft:#f6e1e0;
+  --font:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#14181e; --surface:#1b2028; --fg:#e4e7ec; --muted:#9aa3b0; --line:#2e3540;
+  --accent:#8fb0dc; --accent-soft:#223044;
+  --good:#7cc49a; --good-soft:#1c3026; --warn:#e0b06a; --warn-soft:#352a18; --bad:#e58b8b; --bad-soft:#3a2222; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#14181e; --surface:#1b2028; --fg:#e4e7ec; --muted:#9aa3b0; --line:#2e3540;
+  --accent:#8fb0dc; --accent-soft:#223044;
+  --good:#7cc49a; --good-soft:#1c3026; --warn:#e0b06a; --warn-soft:#352a18; --bad:#e58b8b; --bad-soft:#3a2222; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--font);font-size:15px;line-height:1.65;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:40px 64px}
+.wrap{max-width:1040px;margin:0 auto;display:grid;gap:44px}
+.wrap>*{min-width:0}
+h1{font-size:clamp(26px,4vw,36px);font-weight:900;letter-spacing:-.02em;margin:0;text-wrap:balance}
+h2{font-size:21px;font-weight:700;margin:0 0 12px;text-wrap:balance;letter-spacing:-.01em}
+h3{font-size:16px;font-weight:700;margin:18px 0 8px}
+p{margin:0 0 10px;max-width:72ch}
+.eyebrow{font-size:12px;letter-spacing:.08em;color:var(--muted);font-weight:500}
+.meta{color:var(--muted);font-size:13px}
+a{color:var(--accent);text-underline-offset:2px}
+a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.num,td.n{font-variant-numeric:tabular-nums;font-family:var(--mono);font-size:13.5px}
+.lead{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:20px 22px;display:grid;gap:10px}
+.lead strong{color:var(--accent)}
+.assume{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.chip{display:inline-block;font-size:12.5px;padding:2px 9px;border-radius:999px;background:var(--accent-soft);color:var(--accent);white-space:nowrap}
+.pill{display:inline-block;font-size:12px;font-weight:700;padding:1px 8px;border-radius:4px;white-space:nowrap}
+.ok{background:var(--good-soft);color:var(--good)} .mid{background:var(--warn-soft);color:var(--warn)} .no{background:var(--bad-soft);color:var(--bad)}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:12.5px;color:var(--muted);font-weight:500;background:var(--bg);white-space:nowrap}
+tr:last-child td{border-bottom:none}
+td.n{text-align:right;white-space:nowrap}
+.cov{display:grid;gap:8px;margin-top:14px}
+.cov-row{display:grid;grid-template-columns:150px 1fr 56px;gap:10px;align-items:center;font-size:13.5px}
+.track{position:relative;height:14px;background:var(--bg);border:1px solid var(--line);border-radius:3px}
+.fill{position:absolute;inset:0 auto 0 0;border-radius:2px}
+.tick{position:absolute;top:-4px;bottom:-4px;width:1px;background:var(--muted);opacity:.6}
+.scale{position:relative;height:16px;font-size:11px;color:var(--muted);margin-left:160px;margin-right:66px}
+.scale span{position:absolute;transform:translateX(-50%)}
+.gbar{display:flex;align-items:center;gap:8px}
+.gbar i{display:block;height:8px;background:var(--accent);border-radius:2px;opacity:.75}
+.picks{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+.pick{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px;display:grid;gap:8px;align-content:start}
+.pick img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:6px;border:1px solid var(--line);background:var(--bg)}
+.thumb{width:72px;height:72px;object-fit:cover;border-radius:5px;border:1px solid var(--line);background:var(--bg);display:block;max-width:none}
+.pick .tag{font-size:12px;color:var(--muted);letter-spacing:.06em}
+.pick h3{margin:0;font-size:17px}
+.pick .price{font-family:var(--mono);font-size:20px;font-variant-numeric:tabular-nums}
+.pick ul{margin:0;padding-left:18px;font-size:14px}
+.pick li{margin-bottom:3px}
+ul.plain{margin:0;padding-left:18px} ul.plain li{margin-bottom:6px;max-width:80ch}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px}
+.cols>*{min-width:0}
+.check li{list-style:none;margin-left:-18px}
+.check li::before{content:"□ ";color:var(--accent)}
+.foot{font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:16px}
+.status{font-size:13.5px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px 14px}
+@media (max-width:560px){.cov-row{grid-template-columns:100px 1fr 44px}.scale{margin-left:110px;margin-right:54px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+
+</head>
+<body>
+<div class="wrap">
+
+<header style="display:grid;gap:10px">
+  <div class="eyebrow">구매 리서치 · 2026-11-22 기준</div>
+  <h1>구스다운 이불 리서치</h1>
+  <p class="meta">폴란드 구스 · 솜털 90%+ · FP 800+ · 240cm 폭 이상 조건으로 다나와, 종합몰·오픈마켓, 브랜드 자사몰, 면세점을 비교함. 가격은 목표 사이즈 옵션 기준이며, 확인 못 한 값은 "미확정/추정"으로 표기함.</p>
+</header>
+
+<section class="lead">
+  <div class="eyebrow">결론</div>
+  <p style="margin:0">1900mm 폭 매트리스엔 <strong>이불 폭 240cm 이상</strong>이 필요함. 조건 전부를 충족하는 최저 g당 단가는 <strong>폭스베딩 최고중량 폴란드90 KK (240×230, 1700g) — SSG 870,600원, 512원/g</strong>. 우선후보 <strong>구스초이 KK (240×240, 1370g)</strong>는 쿠폰가 884,000원, 645원/g이나 FP 표기 하한이 780으로 기준 800에 미달함.</p>
+  <div class="assume">
+    <span class="chip">시몬스 더원 GK 1900×2075×340</span>
+    <span class="chip">포켓스프링 + 필로우탑</span>
+    <span class="chip">폴란드산</span><span class="chip">솜털 90%+</span><span class="chip">FP 800+</span>
+    <span class="chip">예산 ≤ 1,000,000원</span><span class="chip">우선후보: 구스초이 KK</span>
+  </div>
+  <p class="meta" style="margin:0">매트리스는 실측 정보(시몬스 더원 GK) 기준. 털 원산지·비율·FP·예산은 리서치 프롬프트 예시값을 조건으로 씀. 상위 세션 지시에 따라 Q(퀸) 가격도 병기함. 구매·결제·로그인은 하지 않음.</p>
+</section>
+
+<section>
+  <h2>1. 필요 이불 사이즈 · 시몬스 더원 GK</h2>
+  <p>매트리스: 시몬스 더원 GK 1900×2075mm, 높이 340mm(포켓스프링 + 필로우탑). 필로우탑까지 포함한 높이라 측면이 두껍고, 매트리스 커버나 토퍼를 쓰면 높이가 더 올라가 커버율은 표보다 조금 낮아짐.</p>
+  <p>양옆 처짐 = (이불 폭 − 1900) ÷ 2, 커버율 = 처짐 ÷ 매트리스 높이 340mm, 발끝 처짐 = 이불 길이 − 2075. 판정: 50% 미만 부족, 70% 이상 합격, 100% 이상적.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>이불 규격 (cm)</th><th>해당 제품 예</th><th>양옆 처짐</th><th>커버율</th><th>발끝 처짐</th><th>판정</th></tr></thead>
+    <tbody>
+      <tr><td>200×230 (Q)</td><td>대부분의 퀸</td><td class="n">5cm</td><td class="n">15%</td><td class="n">22.5cm</td><td><span class="pill no">부족</span></td></tr>
+      <tr><td>220×240</td><td>헬렌스타인 K/LK, 포엠호텔 LK, 코스트코 구스앤홈 K</td><td class="n">15cm</td><td class="n">44%</td><td class="n">32.5cm</td><td><span class="pill no">부족</span></td></tr>
+      <tr><td>230×230</td><td>구스초이 LK</td><td class="n">20cm</td><td class="n">59%</td><td class="n">22.5cm</td><td><span class="pill mid">미흡</span></td></tr>
+      <tr><td>240×230</td><td>폭스베딩 KK, 레노마홈 K, 소프라움, 조선호텔 럭스</td><td class="n">25cm</td><td class="n">74%</td><td class="n">22.5cm</td><td><span class="pill ok">합격</span></td></tr>
+      <tr><td>240×240</td><td>구스초이 KK, 포엠호텔 GK, 유슬립 GK</td><td class="n">25cm</td><td class="n">74%</td><td class="n">32.5cm</td><td><span class="pill ok">합격</span></td></tr>
+      <tr><td>260×240</td><td>해당 제품 못 찾음</td><td class="n">35cm</td><td class="n">103%</td><td class="n">32.5cm</td><td><span class="pill ok">이상적</span></td></tr>
+    </tbody>
+  </table></div>
+  <div class="cov" aria-label="측면 커버율 막대">
+    <div class="cov-row"><span>200×230</span><div class="track"><div class="fill" style="width:13.6%;background:var(--bad)"></div><i class="tick" style="left:45.5%"></i><i class="tick" style="left:63.6%"></i><i class="tick" style="left:90.9%"></i></div><span class="num">15%</span></div>
+    <div class="cov-row"><span>220×240</span><div class="track"><div class="fill" style="width:40%;background:var(--bad)"></div><i class="tick" style="left:45.5%"></i><i class="tick" style="left:63.6%"></i><i class="tick" style="left:90.9%"></i></div><span class="num">44%</span></div>
+    <div class="cov-row"><span>230×230</span><div class="track"><div class="fill" style="width:53.6%;background:var(--warn)"></div><i class="tick" style="left:45.5%"></i><i class="tick" style="left:63.6%"></i><i class="tick" style="left:90.9%"></i></div><span class="num">59%</span></div>
+    <div class="cov-row"><span>240×230 / 240</span><div class="track"><div class="fill" style="width:67.3%;background:var(--good)"></div><i class="tick" style="left:45.5%"></i><i class="tick" style="left:63.6%"></i><i class="tick" style="left:90.9%"></i></div><span class="num">74%</span></div>
+    <div class="cov-row"><span>260×240</span><div class="track"><div class="fill" style="width:93.6%;background:var(--good)"></div><i class="tick" style="left:45.5%"></i><i class="tick" style="left:63.6%"></i><i class="tick" style="left:90.9%"></i></div><span class="num">103%</span></div>
+    <div class="scale"><span style="left:0%">0</span><span style="left:45.5%">50</span><span style="left:63.6%">70</span><span style="left:90.9%">100</span></div>
+  </div>
+  <p class="meta" style="margin-top:8px">이름(K/LK/GK/KK)은 브랜드마다 치수가 다름. 매트리스가 "GK"라도 이불 GK가 같은 폭이란 뜻은 아님. 헬렌스타인 "K/LK"는 220×240으로 이 매트리스엔 부족하고, 포엠호텔·유슬립 GK는 240×240으로 합격임.</p>
+</section>
+
+<section>
+  <h2>2. 품질 기준과 표기 함정</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>분류</th><th>키워드</th><th>주제</th><th>설명</th></tr></thead>
+    <tbody>
+      <tr><td>품질</td><td>필파워</td><td>부풂 정도</td><td>600+ 최소, 700+ 충분, 800+ 프리미엄. 보온력은 필파워 × 충전량 × 솜털 비율로 봐야 함</td></tr>
+      <tr><td>품질</td><td>측정 단위</td><td>in³/oz vs cm³/30g</td><td>미국식과 KS·IDFB 방식은 직접 비교 불가. 이번에 본 상세페이지 중 단위·방식을 적은 곳은 없음</td></tr>
+      <tr><td>표기</td><td>80% 규칙</td><td>구스 표기 기준</td><td>거위털 80% 초과일 때만 '구스' 표기 가능</td></tr>
+      <tr><td>표기</td><td>소비자원 2017</td><td>표기 미달 사례</td><td>9개 브랜드 중 3개(박홍근홈패션·자미온·리베코네트)가 거위털 53~65%로 부적합. 리베코네트는 솜털 80% 표기 → 실측 70%. 까사미아·알레르망은 충전량 표시 개선 지적</td></tr>
+      <tr><td>표기</td><td>소비자원 2025</td><td>후속 조사</td><td>25년 1월 구스 토퍼 6개 중 일부 비율 불일치(하부층 거위털 35.5%), 25년 12월 구스 패딩 24개 중 5개가 80% 미달</td></tr>
+      <tr><td>표기</td><td>원산지 ≠ 제조국</td><td>혼동 주의</td><td>헬렌스타인·구스초이·알레르망 모두 털은 폴란드산, 충전·봉제는 한국</td></tr>
+      <tr><td>가격</td><td>시작가 함정</td><td>목표 사이즈 실가</td><td>목록의 대표가는 대개 최소 사이즈 가격. 아래 표는 KK/GK 옵션가로 확인함</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>3. 조건 충족 후보 비교 (240cm 폭)</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>이미지</th><th>제품</th><th>크기</th><th>충전 / 비율 / FP</th><th>인증 표기</th><th>최저 실가 · 판매처</th><th>g당 단가</th><th>Q 가격</th><th>판정</th></tr></thead>
+    <tbody>
+      <tr><td><img class="thumb" src="img/foxbedding-kk.jpg" alt="폭스베딩 폴란드 구스 이불"></td><td><a href="https://prod.danawa.com/info/?pcode=124855811">폭스베딩 최고중량 한파용 먼지없는 마이크로 폴란드 구스 KK</a></td><td>240×230</td><td>1700g / 90:10 / 800~850</td><td>OEKO·IDFB·KC (번호 없음)</td><td class="n">870,600<br><span class="meta">SSG, 무료배송</span></td><td><div class="gbar"><i style="width:42px"></i><span class="num">512원</span></div></td><td class="n"><a href="https://prod.danawa.com/info/?pcode=124855775">758,500</a></td><td><span class="pill ok">1순위 가성비</span></td></tr>
+      <tr><td><img class="thumb" src="img/goosechoi-kk.jpg" alt="구스초이 구스다운 이불솜"></td><td><a href="https://www.goosechoi.com/32/?idx=302">구스초이 4계절 코이케 폴란드산 구스다운 이불솜 KK</a></td><td>240×240</td><td>1370g / 90:10 / 780~800</td><td>RDS·OEKO-TEX 문구 (번호 없음)</td><td class="n">884,000<br><span class="meta">자사몰 쿠폰가, 정가 1,990,000</span></td><td><div class="gbar"><i style="width:53px"></i><span class="num">645원</span></div></td><td class="n"><a href="https://www.goosechoi.com/32/?idx=299">744,000</a><br><span class="meta">1100g</span></td><td><span class="pill mid">FP 하한 미달</span></td></tr>
+      <tr><td><img class="thumb" src="img/foem-gk.jpg" alt="포엠호텔 폴란드 겨울 구스 이불"></td><td><a href="https://foemhotel.com/product/%ED%8F%B4%EB%9E%80%EB%93%9C-%EA%B2%A8%EC%9A%B8-%EA%B5%AC%EC%8A%A4-%EC%9D%B4%EB%B6%88/131/">포엠호텔 폴란드 겨울 구스 이불 GK</a></td><td>240×240</td><td>1100g / 90:10 / 미표기</td><td>없음</td><td class="n">653,400 (추정)<br><span class="meta">정가 1,089,000 × 40% 할인 가정, SOLD OUT</span></td><td><div class="gbar"><i style="width:49px"></i><span class="num">594원*</span></div></td><td class="n">837,000<br><span class="meta">정가</span></td><td><span class="pill mid">품절·FP 미표기</span></td></tr>
+      <tr><td><img class="thumb" src="img/renoma.jpg" alt="레노마홈 네오 폴란드 구스이불솜"></td><td><a href="https://prod.danawa.com/info/?pcode=99287249">레노마홈 네오 폴란드 겨울용 구스이불솜 K</a></td><td>240×230</td><td>1200g / 90:10 / 800</td><td>KC만</td><td class="n">1,333,480<br><span class="meta">롯데ON·롯데백화점 / 롯데홈쇼핑 KB카드 1,283,920</span></td><td><div class="gbar"><i style="width:92px"></i><span class="num">1,111원</span></div></td><td class="n"><a href="https://prod.danawa.com/info/?pcode=99287240">1,070,000</a></td><td><span class="pill mid">예산 초과</span></td></tr>
+      <tr><td><img class="thumb" src="img/renoma.jpg" alt="레노마홈 네오 폴란드 구스이불솜"></td><td><a href="https://prod.danawa.com/info/?pcode=99287204">레노마홈 네오 폴란드 사계절 구스이불솜 K</a></td><td>240×230</td><td>950g / 90:10 / 800</td><td>KC만</td><td class="n">1,152,750<br><span class="meta">롯데홈쇼핑 / KB카드 1,095,110</span></td><td><div class="gbar"><i style="width:100px"></i><span class="num">1,213원</span></div></td><td class="n"><a href="https://prod.danawa.com/info/?pcode=99287195">954,000</a></td><td><span class="pill mid">예산 초과</span></td></tr>
+      <tr><td><img class="thumb" src="img/yousleep-gk.jpg" alt="유슬립 에어구스이불"></td><td><a href="https://m.yousleep.co.kr/product/detail.html?product_no=145&cate_no=87&display_group=1">유슬립 겨울용 에어구스이불 그랜드킹</a></td><td>240×240</td><td>1100g / 90:10 / 미표기</td><td>없음</td><td class="n">804,800<br><span class="meta">정가 1,006,000, SOLD OUT 표기</span></td><td><div class="gbar"><i style="width:60px"></i><span class="num">732원</span></div></td><td class="n">674,400</td><td><span class="pill no">원산지 불일치</span></td></tr>
+    </tbody>
+  </table></div>
+  <p class="meta" style="margin-top:8px">* 추정. 가격은 모두 무료배송 기준. 다나와 가격 갱신일: 폭스베딩·레노마 사계절 2026-08-24, 레노마 겨울용 2026-11-22. 8월 가격은 현재가와 다를 수 있음. 폭스베딩은 다나와 등록월이 2026-11로 표시돼 갱신일과 맞지 않음.</p>
+</section>
+
+<section>
+  <h2>4. 추천</h2>
+  <div class="picks">
+    <article class="pick">
+      <img src="img/foxbedding-kk.jpg" alt="폭스베딩 최고중량 폴란드90 구스 이불">
+      <div class="tag">가성비 1 · 겨울/한파</div>
+      <h3>폭스베딩 최고중량 폴란드90 KK</h3>
+      <div class="price">870,600원</div>
+      <ul>
+        <li>240×230 합격, 솜털 90%, FP 800~850</li>
+        <li>OEKO·IDFB 표기, g당 512원으로 최저</li>
+        <li>단점: 1700g 한파용이라 무겁고 더울 수 있음. 사계절용엔 과함</li>
+        <li>판매처가 SSG·신세계몰·CJ온스타일 3곳뿐, 가격이 8월 기준</li>
+      </ul>
+      <a href="https://prod.danawa.com/info/?pcode=124855811">다나와 가격비교 열기</a>
+    </article>
+    <article class="pick">
+      <img src="img/goosechoi-kk.jpg" alt="구스초이 코이케 폴란드 구스다운 이불솜">
+      <div class="tag">가성비 2 · 사계절 · 우선후보</div>
+      <h3>구스초이 코이케 폴란드 KK</h3>
+      <div class="price">884,000원</div>
+      <ul>
+        <li>240×240으로 정확히 맞음, 1370g 사계절용, 구매평 91건</li>
+        <li>RDS·OEKO-TEX 문구 있음</li>
+        <li>반대 근거: FP 780~800(하한 미달), 인증번호 없음, 자사몰 단독이라 가격 비교 불가</li>
+        <li>주문제작 3~5일 → 반품 제한 가능성 확인 필요. 커버 별도</li>
+      </ul>
+      <a href="https://www.goosechoi.com/32/?idx=302">상품 페이지 열기</a>
+    </article>
+    <article class="pick">
+      <img src="img/renoma.jpg" alt="레노마홈 네오 폴란드 구스이불솜">
+      <div class="tag">프리미엄</div>
+      <h3>레노마홈 네오 폴란드 겨울용 K</h3>
+      <div class="price">1,283,920원~</div>
+      <ul>
+        <li>240×230, 1200g, 90:10, 800FP</li>
+        <li>백화점·홈쇼핑 포함 판매처 17곳, 유통 투명</li>
+        <li>단점: 예산 초과, 인증 표기는 KC뿐, g당 1,111원</li>
+        <li>최저가는 롯데홈쇼핑 KB국민카드 결제 기준</li>
+      </ul>
+      <a href="https://prod.danawa.com/info/?pcode=99287249">다나와 가격비교 열기</a>
+    </article>
+  </div>
+</section>
+
+<section>
+  <h2>5. 판매처별 가격 상세</h2>
+  <div class="cols">
+    <div>
+      <h3>폭스베딩 폴란드90 KK 240×230 1700g</h3>
+      <div class="tbl"><table><thead><tr><th>판매처</th><th>가격</th><th>혜택</th></tr></thead><tbody>
+        <tr><td>SSG.COM</td><td class="n">870,600</td><td>3개월 무이자</td></tr>
+        <tr><td>신세계몰</td><td class="n">890,600</td><td>3개월 무이자</td></tr>
+        <tr><td>CJ온스타일</td><td class="n">1,059,440</td><td>KB국민카드 1,006,470</td></tr>
+      </tbody></table></div>
+      <p class="meta" style="margin-top:6px">다른 사이즈: S 514,850 · Q 758,500 · K 812,650 · LK 975,100 · 오픈마켓 판매처 없음</p>
+    </div>
+    <div>
+      <h3>구스초이 4계절 폴란드 (자사몰)</h3>
+      <div class="tbl"><table><thead><tr><th>사이즈</th><th>충전량</th><th>판매가</th></tr></thead><tbody>
+        <tr><td>KK 240×240</td><td class="n">1370g</td><td class="n">899,000 (쿠폰 884,000)</td></tr>
+        <tr><td>LK 230×230</td><td class="n">1300g</td><td class="n">869,000</td></tr>
+        <tr><td>K 220×230</td><td class="n">1200g</td><td class="n">819,000</td></tr>
+        <tr><td>Q 200×230</td><td class="n">1100g</td><td class="n">759,000 (쿠폰 744,000)</td></tr>
+        <tr><td>SS 160×210</td><td class="n">800g</td><td class="n">599,000</td></tr>
+      </tbody></table></div>
+      <p class="meta" style="margin-top:6px">같은 몰의 "특급호텔" 라인은 중국산 FP 700 (KK 599,000) — 혼동 주의</p>
+    </div>
+    <div>
+      <h3>레노마홈 네오 폴란드 겨울용 K 240×230 1200g</h3>
+      <div class="tbl"><table><thead><tr><th>판매처</th><th>가격</th><th>혜택</th></tr></thead><tbody>
+        <tr><td>롯데백화점 / 롯데ON</td><td class="n">1,333,480</td><td>—</td></tr>
+        <tr><td>롯데홈쇼핑</td><td class="n">1,351,500</td><td>KB국민카드 1,283,920</td></tr>
+        <tr><td>11번가</td><td class="n">1,377,800</td><td>16개월 무이자</td></tr>
+        <tr><td>SSG.COM</td><td class="n">1,402,900</td><td>3개월 무이자</td></tr>
+        <tr><td>신세계몰</td><td class="n">1,422,900</td><td>3개월 무이자</td></tr>
+        <tr><td>G마켓 / 옥션</td><td class="n">1,451,810</td><td>24개월 무이자</td></tr>
+        <tr><td>더현대닷컴</td><td class="n">1,530,000</td><td>현대카드 1,422,900</td></tr>
+      </tbody></table></div>
+    </div>
+    <div>
+      <h3>레노마홈 네오 폴란드 사계절 K 240×230 950g</h3>
+      <div class="tbl"><table><thead><tr><th>판매처</th><th>가격</th><th>혜택</th></tr></thead><tbody>
+        <tr><td>롯데홈쇼핑</td><td class="n">1,152,750</td><td>KB국민카드 1,095,110</td></tr>
+        <tr><td>11번가</td><td class="n">1,175,180</td><td>16개월 무이자</td></tr>
+        <tr><td>SSG.COM</td><td class="n">1,193,650</td><td>3개월 무이자</td></tr>
+        <tr><td>신세계몰</td><td class="n">1,213,650</td><td>3개월 무이자</td></tr>
+        <tr><td>G마켓 / 옥션</td><td class="n">1,233,900</td><td>24개월 무이자</td></tr>
+      </tbody></table></div>
+      <p class="meta" style="margin-top:6px">S 755,250 · Q 954,000</p>
+    </div>
+    <div>
+      <h3>참고: 폭스베딩 폴란드 80 KK 240×230 1700g (FP 700~750)</h3>
+      <div class="tbl"><table><thead><tr><th>판매처</th><th>가격</th><th>혜택</th></tr></thead><tbody>
+        <tr><td>롯데홈쇼핑</td><td class="n">837,960</td><td>KB국민카드 796,060</td></tr>
+        <tr><td>홈&amp;쇼핑 (KK1700g)</td><td class="n">899,000</td><td>롯데카드 836,070</td></tr>
+        <tr><td>롯데ON</td><td class="n">888,290</td><td>—</td></tr>
+        <tr><td>G마켓 / 옥션</td><td class="n">889,000</td><td>24개월 무이자</td></tr>
+        <tr><td>SSG.COM</td><td class="n">996,000</td><td>3개월 무이자</td></tr>
+        <tr><td>신세계몰 / 이마트몰 / LFmall</td><td class="n">1,016,000</td><td>LF NH카드 1,001,000</td></tr>
+      </tbody></table></div>
+      <p class="meta" style="margin-top:6px">솜털 80%라 기준 미달. 홈&amp;쇼핑에 "킹1600g" 839,000 항목도 있어 중량 혼재. <a href="https://prod.danawa.com/info/?pcode=124839055">다나와</a></p>
+    </div>
+    <div>
+      <h3 style="display:flex;gap:10px;align-items:center"><img class="thumb" src="img/hellenstein.jpg" alt="헬렌스타인 웜 폴스카 구스이불">참고: 헬렌스타인 웜 폴스카 (220×240, 사이즈 부족)</h3>
+      <div class="tbl"><table><thead><tr><th>판매처</th><th>K 1000g</th><th>Q 800g</th></tr></thead><tbody>
+        <tr><td>GS SHOP</td><td class="n">641,410 (신한 596,520)</td><td class="n">535,500 (신한 498,020)</td></tr>
+        <tr><td>롯데ON</td><td class="n">665,670</td><td class="n">555,750</td></tr>
+        <tr><td>G마켓 / 옥션</td><td class="n">690,700</td><td class="n">575,000</td></tr>
+        <tr><td>롯데홈쇼핑</td><td class="n">700,700 (KB 665,660)</td><td class="n">585,000 (KB 555,750)</td></tr>
+        <tr><td>11번가</td><td class="n">731,970</td><td class="n">611,100</td></tr>
+        <tr><td>현대Hmall</td><td class="n">—</td><td class="n">614,250 (삼성 583,540)</td></tr>
+        <tr><td>오늘의집</td><td class="n">862,400</td><td class="n">720,000</td></tr>
+        <tr><td>자사몰</td><td class="n">468,000~ (옵션가 미확정)</td><td class="n">—</td></tr>
+      </tbody></table></div>
+      <p class="meta" style="margin-top:6px">Q 기준으로는 최저가. 갱신일 2026-09-07. <a href="https://prod.danawa.com/info/?pcode=15336074">다나와 Q</a> · <a href="https://prod.danawa.com/info/?pcode=15336095">다나와 K</a> · <a href="https://hellenstein.co.kr/product/%ED%8F%B4%EB%9E%80%EB%93%9C%EC%82%B0-%EC%9D%B8%EB%B9%84%ED%8A%B8-%ED%8F%B4%EC%8A%A4%EC%B9%B4-%EA%B5%AC%EC%8A%A4-%EC%9D%B4%EB%B6%88/5188/">자사몰</a></p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>6. 다나와 240×230 구스 이불 전체 목록</h2>
+  <p class="meta">"구스 이불 240x230" 검색 결과 중 가로 240cm 이상 제품(광고 제외). 표시가는 목록 기준이며 최저가와 다를 수 있음.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>제품</th><th>중량</th><th>원산지</th><th>비율</th><th>FP</th><th>표시가</th><th>조건</th></tr></thead>
+    <tbody>
+      <tr><td><a href="https://prod.danawa.com/info/?pcode=124855811">폭스베딩 최고중량 한파용 마이크로 폴란드 구스</a></td><td class="n">1700g</td><td>폴란드</td><td>90:10</td><td>800~850</td><td class="n">870,600</td><td><span class="pill ok">충족</span></td></tr>
+      <tr><td><a href="https://prod.danawa.com/info/?pcode=99287075">레노마홈 네오 폴란드 여름용</a></td><td class="n">470g</td><td>폴란드</td><td>90:10</td><td>800</td><td class="n">725,570</td><td><span class="pill mid">여름용</span></td></tr>
+      <tr><td><a href="https://prod.danawa.com/info/?pcode=99287204">레노마홈 네오 폴란드 사계절</a></td><td class="n">950g</td><td>폴란드</td><td>90:10</td><td>800</td><td class="n">1,152,750</td><td><span class="pill ok">충족 · 예산↑</span></td></tr>
+      <tr><td><a href="https://prod.danawa.com/info/?pcode=99287249">레노마홈 네오 폴란드 겨울용</a></td><td class="n">1200g</td><td>폴란드</td><td>90:10</td><td>800</td><td class="n">1,333,480</td><td><span class="pill ok">충족 · 예산↑</span></td></tr>
+      <tr><td><a href="https://prod.danawa.com/info/?pcode=124839055">폭스베딩 고중량 한파용 마이크로 폴란드 구스</a></td><td class="n">1700g</td><td>폴란드</td><td>80:20</td><td>700~750</td><td class="n">837,960</td><td><span class="pill no">비율·FP</span></td></tr>
+      <tr><td><a href="https://prod.danawa.com/info/?pcode=17768627">소프라움 사르르 폴란드산 사계절</a></td><td class="n">896g</td><td>폴란드</td><td>80:20</td><td>700~750</td><td class="n">592,625</td><td><span class="pill no">비율·FP</span></td></tr>
+      <tr><td><a href="https://prod.danawa.com/info/?pcode=99637319">코지네스트 코모도 폴란드구스 차렵</a></td><td>정보 없음</td><td>폴란드</td><td>80:20</td><td>정보 없음</td><td class="n">990,580</td><td><span class="pill no">비율</span></td></tr>
+      <tr><td><a href="https://prod.danawa.com/info/?pcode=99637688">코지네스트 코모도 폴란드구스 차렵 베개세트</a></td><td>정보 없음</td><td>폴란드</td><td>80:20</td><td>정보 없음</td><td class="n">1,498,720</td><td><span class="pill no">비율</span></td></tr>
+      <tr><td><a href="https://prod.danawa.com/info/?pcode=124855714">조선호텔 럭스 헝가리 라이트필</a></td><td class="n">600g</td><td>헝가리</td><td>90:10</td><td>800</td><td class="n">765,000</td><td><span class="pill mid">원산지</span></td></tr>
+      <tr><td><a href="https://prod.danawa.com/info/?pcode=124855780">조선호텔 럭스 헝가리 미디엄필</a></td><td class="n">900g</td><td>헝가리</td><td>90:10</td><td>800</td><td class="n">994,500</td><td><span class="pill mid">원산지</span></td></tr>
+      <tr><td><a href="https://prod.danawa.com/info/?pcode=124855837">조선호텔 럭스 헝가리 맥시멈필</a></td><td class="n">1250g</td><td>헝가리</td><td>90:10</td><td>800</td><td class="n">1,240,000</td><td><span class="pill mid">원산지 · 예산↑</span></td></tr>
+      <tr><td><a href="https://prod.danawa.com/info/?pcode=17848190">조선호텔앤리조트 헝가리 사계절 이불 세트</a></td><td class="n">1200g</td><td>헝가리</td><td>90:10</td><td>정보 없음</td><td class="n">1,800,000</td><td><span class="pill mid">원산지 · 예산↑</span></td></tr>
+      <tr><td><a href="https://prod.danawa.com/info/?pcode=17848565">조선호텔앤리조트 헝가리 사계절 베딩 풀세트</a></td><td class="n">1200g</td><td>헝가리</td><td>90:10</td><td>정보 없음</td><td class="n">2,491,000</td><td><span class="pill mid">원산지 · 예산↑</span></td></tr>
+      <tr><td><a href="https://prod.danawa.com/info/?pcode=17835713">소프라움 사르르 헝가리산 사계절</a></td><td class="n">896g</td><td>헝가리</td><td>90:10</td><td>750~800</td><td class="n">805,635</td><td><span class="pill mid">원산지 · FP</span></td></tr>
+      <tr><td><a href="https://prod.danawa.com/info/?pcode=99740447">소프라움 트리플웜 HEAT-TEX 시베리아 차렵</a></td><td class="n">896g</td><td>시베리아</td><td>90:10</td><td>800</td><td class="n">650,000</td><td><span class="pill mid">원산지</span></td></tr>
+      <tr><td><a href="https://prod.danawa.com/info/?pcode=33386444">레노마홈 레오구스 차렵</a></td><td>정보 없음</td><td>시베리아</td><td>90:10</td><td>정보 없음</td><td class="n">779,500</td><td><span class="pill mid">원산지 · 미표기</span></td></tr>
+      <tr><td><a href="https://prod.danawa.com/info/?pcode=99737240">폭스베딩 80수 시베리안 구스 80% 한파용</a></td><td class="n">1700g</td><td>시베리아</td><td>80:20</td><td>700~750</td><td class="n">573,300</td><td><span class="pill no">비율·FP</span></td></tr>
+      <tr><td><a href="https://prod.danawa.com/info/?pcode=124412268">소프라움 부다페스트 헝가리산 사계절</a></td><td class="n">896g</td><td>헝가리</td><td>80:20</td><td>700~750</td><td class="n">496,960</td><td><span class="pill no">비율·FP</span></td></tr>
+      <tr><td><a href="https://prod.danawa.com/info/?pcode=124950865">폭스베딩 한겨울용 헝가리 80 텐셀</a></td><td class="n">1400g</td><td>헝가리</td><td>80:20</td><td>650~700</td><td class="n">564,200</td><td><span class="pill no">비율·FP</span></td></tr>
+      <tr><td><a href="https://prod.danawa.com/info/?pcode=124950931">폭스베딩 초겨울용 헝가리 80 텐셀</a></td><td class="n">1200g</td><td>헝가리</td><td>80:20</td><td>650~700</td><td class="n">504,950</td><td><span class="pill no">비율·FP</span></td></tr>
+      <tr><td><a href="https://prod.danawa.com/info/?pcode=124950963">폭스베딩 고중량 한파용 헝가리 80 텐셀</a></td><td class="n">1700g</td><td>헝가리</td><td>80:20</td><td>650~700</td><td class="n">650,650</td><td><span class="pill no">비율·FP</span></td></tr>
+      <tr><td><a href="https://prod.danawa.com/info/?pcode=99710831">코지네스트 네오구스볼 사계절</a></td><td>정보 없음</td><td>정보 없음</td><td>정보 없음</td><td>정보 없음</td><td class="n">454,300</td><td><span class="pill no">미표기</span></td></tr>
+      <tr><td>폭스베딩 한겨울용 헝가리 숨 쉬는 텐셀 (오늘의집)</td><td class="n">1400g</td><td>정보 없음</td><td>정보 없음</td><td>정보 없음</td><td class="n">674,000</td><td><span class="pill no">미표기</span></td></tr>
+    </tbody>
+  </table></div>
+  <p class="meta" style="margin-top:8px">"구스이불 240x240" 검색에선 가로 240cm 이상 제품을 원문으로 확인하지 못함(대부분 220×240).</p>
+</section>
+
+<section>
+  <h2>7. 다나와 "폴란드구스다운" 검색 상위 (참고)</h2>
+  <p class="meta">표시가는 대부분 싱글/퀸 등 작은 사이즈 기준 시작가임. 큰 사이즈 가격으로 쓰면 안 됨. 상위 15개 중 가로 240cm 이상은 없음.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>제품</th><th>크기</th><th>중량</th><th>비율</th><th>FP</th><th>표시가 (사이즈)</th></tr></thead>
+    <tbody>
+      <tr><td><a href="https://prod.danawa.com/info/?pcode=18004526">소프라움 카르 폴란드90 100수 사계절</a></td><td>160×210</td><td class="n">576g</td><td>90:10</td><td>800~850</td><td class="n">738,060 (S)</td></tr>
+      <tr><td><a href="https://prod.danawa.com/info/?pcode=15332321">헬렌스타인 투인원 폴스카 500+800g</a></td><td>220×240</td><td class="n">1300g</td><td>90:10</td><td>800~850</td><td class="n">946,400 (K)</td></tr>
+      <tr><td><a href="https://prod.danawa.com/info/?pcode=15332285">헬렌스타인 투인원 폴스카 400+700g</a></td><td>200×230</td><td class="n">1100g</td><td>90:10</td><td>800~850</td><td class="n">790,840 (Q)</td></tr>
+      <tr><td><a href="https://prod.danawa.com/info/?pcode=14716460">클라르하임 아뜨리에 100 폴란드 프리미엄</a></td><td>200×230</td><td class="n">800g</td><td>95:5</td><td>미기재</td><td class="n">2,633,130 (Q)</td></tr>
+      <tr><td><a href="https://prod.danawa.com/info/?pcode=71160911">폭스베딩 80수 고밀도워싱 폴란드구스 차렵</a></td><td>160×210</td><td class="n">650g</td><td>95:5</td><td>800~900</td><td class="n">490,000 (S)</td></tr>
+      <tr><td><a href="https://prod.danawa.com/info/?pcode=71066795">폭스베딩 80수 폴란드 구스다운 한파용</a></td><td>160×210</td><td class="n">1000g</td><td>95:5</td><td>800~900</td><td class="n">383,540 (S)</td></tr>
+      <tr><td><a href="https://prod.danawa.com/info/?pcode=71160044">폭스베딩 80수 워싱 블랙파이핑 폴란드구스</a></td><td>160×210</td><td class="n">650g</td><td>95:5</td><td>800~900</td><td class="n">502,740 (S)</td></tr>
+      <tr><td><a href="https://prod.danawa.com/info/?pcode=30207578">폭스베딩 한파용 스노우 폴란드 구스 차렵</a></td><td>160×210</td><td class="n">1000g</td><td>95:5</td><td>800~900</td><td class="n">503,300 (S)</td></tr>
+      <tr><td><a href="https://prod.danawa.com/info/?pcode=124480531">트라우미나 익스클루시브 구스다운 속통</a></td><td>160×210</td><td class="n">640g</td><td>95:5</td><td>미기재</td><td class="n">600,000 (SS)</td></tr>
+      <tr><td><a href="https://prod.danawa.com/info/?pcode=15479462">헬렌스타인 라이트 폴스카</a></td><td>160×210</td><td class="n">200g</td><td>90:10</td><td>800~850</td><td class="n">194,560 (S)</td></tr>
+      <tr><td><a href="https://prod.danawa.com/info/?pcode=99744029">리빙앤홈 다운투유 94% 한파용</a></td><td>160×210</td><td class="n">900g</td><td>94:6</td><td>850</td><td class="n">447,950 (S)</td></tr>
+      <tr><td><a href="https://prod.danawa.com/info/?pcode=99745874">리빙앤홈 다운투유 94% 겨울용+커버</a></td><td>160×210</td><td class="n">650g</td><td>94:6</td><td>850</td><td class="n">415,650 (S)</td></tr>
+      <tr><td><a href="https://prod.danawa.com/info/?pcode=99746210">리빙앤홈 다운투유 80% 사계절</a></td><td>160×210</td><td class="n">400g</td><td>80:20</td><td>650</td><td class="n">208,250 (S)</td></tr>
+      <tr><td><a href="https://prod.danawa.com/info/?pcode=13167659">라셀렌 에코 알러지케어 폴란드90 한파용</a></td><td>160×210</td><td class="n">850g</td><td>90:10</td><td>800~850</td><td class="n">일시품절</td></tr>
+    </tbody>
+  </table></div>
+  <p class="meta" style="margin-top:8px">이 표는 요약 모델이 정리한 부분이 섞여 있어 순위·값은 원문 재확인 권장. 폭스베딩 95:5 라인에 240폭 옵션이 있는지는 미확인.</p>
+</section>
+
+<section>
+  <h2>8. 제외 후보와 사유</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>제품 · 판매처</th><th>확인 내용</th><th>제외 사유</th></tr></thead>
+    <tbody>
+      <tr><td><a href="https://m.yousleep.co.kr/product/detail.html?product_no=122&cate_no=87&display_group=1">유슬립 [겨울용] 폴란드 에어 구스 이불</a></td><td>GK 240×240 1100g, 804,800원, 80수 면</td><td>제품명 "폴란드" vs 충전재 "Hungary Goose" 표기 불일치. FP·인증·제조국 미표기. 맞춤제작 반품 불가, 반품비 30,000원</td></tr>
+      <tr><td><a href="https://m.flora.co.kr/goods/goods_view.php?goodsNo=1000003808">플로라침구 프리미엄 폴란드90 겨울/한파</a></td><td>320,000원(정가 825,900), 850FP, 순면</td><td>cm·사이즈별 가격·충전량·인증 모두 없음. 저가인데 스펙 누락 → 경고 신호</td></tr>
+      <tr><td><a href="https://bountiful.co.kr/product/%EB%A1%9C%EC%96%84-%ED%8F%B4%EB%9E%80%EB%93%9C-%EC%88%98%ED%94%BC%EB%A7%88%EC%BD%94%ED%8A%BC-%ED%98%B8%ED%85%94-%EA%B5%AC%EC%8A%A4%EB%8B%A4%EC%9A%B490%EC%9D%B4%EB%B6%88%EC%86%9C-ssqk-%EA%B2%A8%EC%9A%B8%EC%9A%A9/146/">바운티풀 로얄 폴란드 수피마코튼 90%</a></td><td>SS 800g / Q 1000g / K 1200g, 649,900원</td><td>SOLD OUT. cm·FP·인증 미표기, K까지만 있음</td></tr>
+      <tr><td><a href="https://m.w-shopping.co.kr/display/goods/15648101">W쇼핑 클래식패브릭 폴란드 화이트라벨 퀸풀세트</a></td><td>499,000원, 앱가 431,100원~</td><td>충전량·비율·FP·인증 미표기, VIP 전용</td></tr>
+      <tr><td><a href="https://www.classic-fabric.com/">클래식패브릭 자사몰</a></td><td>폴란드 90% / 95% 라인 있음, 국내 직영 공장 문구</td><td>상세 페이지 미확인, 240폭 옵션 미확인</td></tr>
+      <tr><td><a href="https://foemhotel.com/product/%ED%8F%B4%EB%9E%80%EB%93%9C-%EA%B2%A8%EC%9A%B8-%EA%B5%AC%EC%8A%A4-%EC%9D%B4%EB%B6%88/131/">포엠호텔 LK</a></td><td>220×240 900g</td><td>사이즈 부족 (GK만 후보)</td></tr>
+      <tr><td><a href="https://hellenstein.co.kr/product/detail.html?product_no=5228">헬렌스타인 투인원 폴스카</a></td><td>K/LK 500+800g 675,000원(자사몰)</td><td>220×240 사이즈 부족</td></tr>
+      <tr><td><a href="https://www.costco.co.kr/FurnitureBeddingHome/Bedding/ComfortersBlanketsThrows/GOOSEHOME-Goose-Down-Comforter-King-1000g/p/693890">코스트코 구스앤홈 폴란드 구스</a></td><td>K 220×240</td><td>솜털 80:20, 사이즈 부족</td></tr>
+      <tr><td><a href="https://www.kolonmall.com/Brands/gooseon/Product/K1760323373877041NO01">코오롱몰 구스온 세미마이크로 폴란드 구스 70</a></td><td>70:30</td><td>솜털 80% 미만 ('구스 다운' 표기 기준 미달)</td></tr>
+      <tr><td><a href="https://www.kolonmall.com/Product/K1728950583422068WH01">코오롱몰 사르르 폴란드 여름 이불솜</a></td><td>240×230, FP 700</td><td>여름용, FP 미달</td></tr>
+      <tr><td><a href="https://sofraumn.com/product/%ED%98%B8%ED%85%94%ED%8C%A8%ED%82%A4%EC%A7%80-%ED%8F%B4%EB%9E%80%EB%93%9C80-%EA%B5%AC%EC%8A%A4%EC%9D%B4%EB%B6%88%EC%86%9C%EC%A4%91%EB%9F%89%EC%84%A0%ED%83%9D%EC%BB%B4%ED%8D%BC%EB%8B%88-%EC%9D%B4%EB%B6%88%EB%B2%A0%EA%B0%9C-%EC%BB%A4%EB%B2%84%EC%84%B8%ED%8A%B8-%ED%82%B9/1577/">소프라움앤 호텔패키지 폴란드80 킹</a></td><td>간절기 328,000 / 사계절 752,000 / 한겨울 885,000</td><td>폴란드 80%, FP·cm 미확인</td></tr>
+      <tr><td><a href="https://www.goosechoi.com/34">구스초이 특급호텔 구스다운</a></td><td>KK 599,000원</td><td>중국산, FP 700</td></tr>
+      <tr><td>이브자리 구스 (블로그 정보)</td><td>8:2 라인 40~60만, 9:1 라인 60~80만</td><td>모델·cm·FP 공식 확인 못 함</td></tr>
+      <tr><td><a href="https://www.allerman.com/product/%ED%8F%AC%EC%89%AC-%ED%8F%B4%EB%9E%80%EB%93%9C-%EA%B5%AC%EC%8A%A4-%EC%9D%B4%EB%B6%88%EC%86%9C/">알레르망 포쉬 폴란드 95%</a> · 로드니/레베스</td><td>아래 행사 참고</td><td>K 치수·가격이 정적 페이지에 없어 미확정</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="cols">
+  <div>
+    <h2>9. 연말 행사</h2>
+    <ul class="plain">
+      <li><strong>알레르망 2026 구스 블랙프라이데이</strong>: 폴란드·시베리아 솜털 90%, FP 800~850 프레스티지 차렵(로드니·레베스). Q 정상가 200만 원대 → 60만 원대(최대 75%). 백화점은 11/8 종료, <strong>가두점은 11/30까지</strong>. 공식몰 이벤트 기간 10/1~11/30. K 치수·가격은 미확인 (고객센터 02-555-0940). <a href="https://www.fnnews.com/news/202610281103221861">파이낸셜뉴스</a> · <a href="https://sports.khan.co.kr/article/202610200716003/">스포츠경향</a></li>
+      <li>포엠호텔 40% 할인 표기 (적용 옵션 불명, 현재 품절)</li>
+      <li>유슬립 전 상품 20% 할인 표기</li>
+      <li>쿠팡·11번가·SSG·롯데ON의 구스이불 블프 특가는 검색으로 찾지 못함</li>
+    </ul>
+  </div>
+  <div>
+    <h2>10. 채널 조회 범위</h2>
+    <div class="tbl"><table>
+      <thead><tr><th>채널</th><th>상태</th></tr></thead>
+      <tbody>
+        <tr><td>다나와</td><td><span class="pill ok">확인</span> 상품별 판매처·가격 조회</td></tr>
+        <tr><td>SSG·신세계몰·롯데ON·G마켓·옥션·11번가</td><td><span class="pill ok">확인</span> 다나와 경유</td></tr>
+        <tr><td>GS SHOP·롯데홈쇼핑·CJ온스타일·Hmall·홈&amp;쇼핑</td><td><span class="pill ok">확인</span> 다나와 경유</td></tr>
+        <tr><td>쿠팡·네이버 스마트스토어</td><td><span class="pill mid">미확인</span> 자동 조회 차단</td></tr>
+        <tr><td>위메프·티몬</td><td><span class="pill mid">미확인</span> 다나와 판매처에 없음</td></tr>
+        <tr><td>신라·롯데·신세계·현대 면세점</td><td><span class="pill no">취급 없음</span> 신라는 거즈·인견 이불만 확인</td></tr>
+        <tr><td>브랜드 자사몰</td><td><span class="pill ok">확인</span> 구스초이·헬렌스타인·포엠·유슬립 등</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</section>
+
+<section class="cols">
+  <div>
+    <h2>11. 주문 전 서면 확인</h2>
+    <p class="meta">구스초이·폭스베딩 판매처에 문의할 항목</p>
+    <ul class="plain check">
+      <li>실제 충전량 (제목 표기와 같은지)</li>
+      <li>필파워 시험성적서 (KS 또는 IDFB, 측정 방식·단위 포함)</li>
+      <li>RDS·OEKO-TEX 인증번호</li>
+      <li>입체 봉제 여부, 고리 개수</li>
+      <li>주문제작 상품의 교환·반품 가능 여부</li>
+      <li>같은 사이즈(KK/240×230) 커버 동시 구매 가능 여부</li>
+      <li>폭스베딩: 현재 SSG 실가와 재고 (다나와 가격이 8월 기준)</li>
+    </ul>
+  </div>
+  <div>
+    <h2>12. 페이지에 없던 정보</h2>
+    <ul class="plain">
+      <li>필파워 측정 단위·방식: 확인한 모든 상세페이지에 없음</li>
+      <li>겉감 밀도(T), 봉제 방식, 고리 개수: 모두 없음</li>
+      <li>인증번호·시험성적서 번호: 모두 없음 (다나와는 OEKO·IDFL·프라우덴 체크만)</li>
+      <li>헬렌스타인 자사몰: 사이즈별 옵션 추가금 미표기</li>
+      <li>포엠호텔 vs 헬렌스타인: LK 중량(900g/1000g)·겉감(80수/60수) 다름 → 다른 제품</li>
+    </ul>
+  </div>
+</section>
+
+<div class="status">완료: 사이즈 산정, 후보 검증, 다나와·종합몰·자사몰 가격 비교, 추천 / 대기: 쿠팡·스마트스토어 실가와 8~9월 다나와 가격의 현재가 직접 확인</div>
+
+<footer class="foot">
+  <p style="margin:0 0 6px">이미지는 각 판매처·다나와의 상품 대표 이미지이며 연출 사진일 수 있음. 레노마홈 겨울용·사계절은 다나와에 같은 이미지가 등록돼 있음.</p>
+  <strong>출처</strong> ·
+  <a href="https://www.goosechoi.com/32">구스초이 폴란드 라인</a> ·
+  <a href="https://goosechoi.com/notice/?bmode=view&idx=13808486">구스초이 KK 입고 공지</a> ·
+  <a href="https://search.danawa.com/dsearch.php?query=%EA%B5%AC%EC%8A%A4+%EC%9D%B4%EB%B6%88+240x230">다나와 240x230 검색</a> ·
+  <a href="https://search.danawa.com/dsearch.php?query=%ED%8F%B4%EB%9E%80%EB%93%9C%EA%B5%AC%EC%8A%A4%EB%8B%A4%EC%9A%B4">다나와 폴란드구스다운 검색</a> ·
+  <a href="https://m.yousleep.co.kr/product/list.html?cate_no=87">유슬립</a> ·
+  <a href="https://www.allerman.com/">알레르망</a> ·
+  <a href="https://biz.sbs.co.kr/amp/article/20000213153">SBS Biz 소비자원 조사</a> ·
+  <a href="https://m.etnews.com/20170116000063">전자신문 2017 구스 이불 조사</a> ·
+  <a href="https://www.khan.co.kr/article/202501161529001">경향 2025 토퍼 조사</a> ·
+  <a href="https://www.ytn.co.kr/_ln/0134_202512091314292318">YTN 2025 패딩 조사</a> ·
+  <a href="https://m.shilladfs.com/estore/kr/ko/p/5139765">신라면세점</a> ·
+  <a href="https://www.ssg.com/item/itemView.ssg?itemId=1000013604179">SSG 신세계백화점 구스</a>
+</footer>
+
+</div>
+
+</body>
+</html>
