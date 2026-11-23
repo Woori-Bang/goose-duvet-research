@@ -58,8 +58,10 @@ td.n{text-align:right;white-space:nowrap}
 .scale span{position:absolute;transform:translateX(-50%)}
 .cand{min-width:1000px}
 .cand td.prod{min-width:210px;font-weight:500}
-.cand td.n{white-space:normal;min-width:120px}
-.cand td.n .meta{display:block;font-family:inherit;line-height:1.45;margin-top:2px}
+.cand td.n{white-space:normal}
+.cand td.n:nth-last-child(4){min-width:170px}
+.cand td:nth-last-child(6){min-width:130px}
+.cand td.n .meta{display:block;font-family:"Noto Sans KR",sans-serif;line-height:1.45;margin-top:2px}
 .cand .gbar{white-space:nowrap}
 .gbar{display:flex;align-items:center;gap:8px}
 .gbar i{display:block;height:8px;background:var(--accent);border-radius:2px;opacity:.75}
